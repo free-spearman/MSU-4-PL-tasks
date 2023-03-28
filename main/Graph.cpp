@@ -1,8 +1,10 @@
 #include "Graph.hpp" 
 
+Graph::Graph(){};
+Graph::~Graph(){};
 id_t Graph::AddCity(const std::string name){
 	if (name.empty()){
-		throw invalid_argument( "empty name");
+		throw std::invalid_argument( "empty name");
 	}
 	// есть ключ в массиве, если нет, то FindCityByName кидает exp
 	try
@@ -19,6 +21,7 @@ id_t Graph::AddCity(const std::string name){
 	id_t nums = this->GetNumCitys();
 
 	this->citys.insert(std::make_pair(name, nums));
+	this->citys_names.insert(std::make_pair(nums, name));
 	location v;
 	this->flights.push_back(v);
 	
@@ -27,7 +30,7 @@ id_t Graph::AddCity(const std::string name){
 
 id_t Graph::AddTransport(const std::string name){
 	if (name.empty()){
-		throw invalid_argument( "empty name");
+		throw std::invalid_argument( "empty name");
 	}
 	// есть ключ в массиве
 	try
@@ -38,6 +41,7 @@ id_t Graph::AddTransport(const std::string name){
 	
 	id_t nums = this->GetNumTypeTransports();
 	this->transports.insert(std::make_pair(name, nums));
+	this->transports_names.insert(std::make_pair(nums, name));
 	return nums;
 };
 
@@ -51,10 +55,10 @@ void Graph::AddFlight(id_t from,
 	){
 	id_t nums =this->GetNumCitys();
 	if (nums < from || nums < to) {
-		throw invalid_argument("there is no such city");
+		throw std::invalid_argument("there is no such city");
 	}
 	if (this->transports.size() < transport_type){
-		throw invalid_argument("incorrect transport type");
+		throw std::invalid_argument("incorrect transport type");
 	} 
 
 	this->flights[from].push_back(Flight(from, to, transport_type, time, fare, locals));
@@ -68,6 +72,7 @@ id_t Graph::FindCityByName(const std::string name){
 	}
 	return this->citys[name];
 };
+
 
 id_t Graph::FindTransportByName(const std::string name){
 	std::unordered_map<std::string, id_t>::iterator itr = this->transports.find(name);
@@ -84,4 +89,25 @@ id_t Graph::GetNumCitys(){
 id_t Graph::GetNumTypeTransports(){
 	return this->transports.size(); 	
 };
-
+ 
+std::string Graph::flightsToString(const Flight& flight){ 
+	std::string from = this->citys_names[ flight.get_from()];
+	std::string to = this->citys_names[flight.get_to()];
+	std::string transport = this->transports_names[flight.get_transport()];
+	weights_t w = flight.get_weights();
+	std::string result = from + " -> " + to + " тр-рт:" + transport + " время:" + std::to_string(w[CRUISE_TIME_P]) + " цена:" + std::to_string(w[CRUISE_FARE_P]);  
+	//std::format("{} -> {} тр-рт{} время:{} цена:{} \n", from, to, transport, w[CRUISE_TIME_P], w[CRUISE_FARE_P]);
+	return result + "\n";
+};
+//вывод в файл, надо сделать оператор <<
+void Graph::printInFile(std::ofstream& out){
+	if ( ! out.is_open()){
+		throw std::runtime_error("Файл не открыт\n");
+	}
+	for( location loc :this->flights ){
+		for(Flight f :loc){
+			out<<(this->flightsToString(f)); 
+		}
+	}
+	out<<std::endl;
+};

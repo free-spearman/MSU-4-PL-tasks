@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <unordered_map>
-
+#include <fstream>
 #include <stdexcept>
 
 #include "custom_types.hpp"
@@ -39,11 +39,16 @@ public:
 	id_t FindTransportByName(const std::string name);
 	id_t GetNumCitys();
 	id_t GetNumTypeTransports();
+	std::string flightsToString(const Flight& flight);
+	void printInFile(std::ofstream& out);
 
 
 protected:
 	std::unordered_map<std::string, id_t> citys;
+	std::unordered_map<id_t, std::string> citys_names;
+
 	std::unordered_map<std::string, id_t> transports;
+	std::unordered_map<id_t, std::string> transports_names;
 	std::vector<location> flights;
 };
 

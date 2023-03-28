@@ -4,6 +4,43 @@
 #include "custom_types.hpp"
 #include "Graph.hpp"
 
+// функции для сравнения 
+// bool (*)(weights_t&  x, weights_t& y);
+
+bool x_faster_y(const weights_t &x, const weights_t &y){
+	return x[CRUISE_TIME_P] < y[CRUISE_TIME_P];
+}
+
+bool x_short_y(const weights_t&  x, const weights_t& y){
+	return x[NUM_LOCALS_P] < y[NUM_LOCALS_P];
+}
+
+bool x_cheaper_y(const weights_t&  x,const weights_t& y){
+	return x[CRUISE_FARE_P] < y[CRUISE_FARE_P];
+}
+
+/*bool x_cheaper_short_y(weights_t&  x, weights_t& y){
+	return x[CRUISE_FARE_P] < y[CRUISE_FARE_P];
+}*/
+
+bool x_cheaper_fast_y(const weights_t&  x, const weights_t& y){
+	if ( x[CRUISE_FARE_P] < y[CRUISE_FARE_P])
+		return true;
+	else if (x[CRUISE_FARE_P] > y[CRUISE_FARE_P])
+		return false;
+	return x[CRUISE_TIME_P] < y[CRUISE_TIME_P];
+}
+
+bool x_fast_cheaper_y(const weights_t&  x, const weights_t& y){
+	if (x[CRUISE_TIME_P] < y[CRUISE_TIME_P]){
+		return true;
+	}
+	else if (x[CRUISE_TIME_P] > y[CRUISE_TIME_P]){
+		return false;
+	}
+	return x[CRUISE_FARE_P] < y[CRUISE_FARE_P];
+}
+
 class SearchAlgorithm {
 protected:
 	Route *actl_rout;

@@ -26,7 +26,8 @@ https://stackoverflow.com/questions/22429719/stdvector-or-stdlist-for-stdunorder
 
 ** я овощ, просто массив из 3-х элементов и рейс  
 */
-
+Flight::Flight(){};
+Flight::~Flight(){};
 
 Flight::Flight(id_t from){
 	this->from = from;
@@ -52,24 +53,35 @@ Flight::Flight(id_t from,
 		this->weights[NUM_LOCALS_P] = locals;
 
 };
+
 Flight::Flight(const Flight &ref){
-	ref.from = this->from;
-	ref.to = this->to;
-	ref.weights = this->weights;
-	ref.transport_type = this->transport_type;
+	this->from = ref.from;
+	this->to = ref.to;
+	this->weights = ref.weights;
+	this->transport_type = ref.transport_type;
 }
-id_t  Flight::get_to(){
+id_t  Flight::get_to() const{
 	return this->to;
 };
-id_t  Flight::get_from(){
+id_t  Flight::get_from() const{
 	return this->from;
 };
-void Flight::get_weights(weights_t &tgt){
+void Flight::get_weights(weights_t &tgt) const{
 	SET_WEIGHTS_WEIGHTS(tgt, this->weights); 
 };
-weights_t Flight::get_weights(){
+
+id_t Flight::get_transport() const{
+	return this->transport_type; 
+};
+
+weights_t Flight::get_weights() const{
 	return this->weights; 
 };
+///
+std::string Flight::toString() const{
+	return std::to_string(this->get_to())+ " -> " + std::to_string(this->get_from());
+};
+
 Route::Route(id_t from): Flight(from){
 	/*this->from = from;
 	this->to = from;
@@ -77,19 +89,26 @@ Route::Route(id_t from): Flight(from){
 	//this->flights.push_front(NULL);
 	*/
 };
-
-void Route::push_front(Flight* f){
-	if (f == NULL)
-		throw invalid_argument( "received empty Flight" );
-	//if (this->from = this->to && this->flights.size() == 0)
-	this->flights.push_front(f);
-	this->from =f->get_from();
-
-	weights_t w;
-	f->get_weights(w);
-	ADD_WEIGHTS(this->weights, this->weights, w);   
+Route::Route(const Route &ref){
+	this->flights = ref.flights;
+	this->from = ref.from; 
+	this->to = ref.to;
+	this->weights = ref.weights; 
 };
 
+void Route::push_front(const Flight &f){
+	/*if (f == NULL)
+		throw invalid_argument( "received empty Flight" );
+	*/
+	//if (this->from = this->to && this->flights.size() == 0)
+	
+	this->flights.push_front(f);
+	this->from =f.get_from();
+
+	weights_t w;
+	f.get_weights(w);
+	ADD_WEIGHTS(this->weights, this->weights, w);   
+};
 
 
 /*
@@ -102,5 +121,3 @@ public:
 	
 }
 */
-
-

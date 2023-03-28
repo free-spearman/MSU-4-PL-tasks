@@ -1,41 +1,4 @@
-
-
-// функции для сравнения 
-// bool (*)(weights_t&  x, weights_t& y);
-
-bool x_faster_y(const weights_t &x, const weights_t &y){
-	return x[CRUISE_TIME_P] < y[CRUISE_TIME_P];
-}
-
-bool x_short_y(const weights_t&  x, const weights_t& y){
-	return x[NUM_LOCALS_P] < y[NUM_LOCALS_P];
-}
-
-bool x_cheaper_y(const weights_t&  x,const weights_t& y){
-	return x[CRUISE_FARE_P] < y[CRUISE_FARE_P];
-}
-
-/*bool x_cheaper_short_y(weights_t&  x, weights_t& y){
-	return x[CRUISE_FARE_P] < y[CRUISE_FARE_P];
-}*/
-
-bool x_cheaper_fast_y(const weights_t&  x, const weights_t& y){
-	if ( x[CRUISE_FARE_P] < y[CRUISE_FARE_P])
-		return true;
-	else if (x[CRUISE_FARE_P] > y[CRUISE_FARE_P])
-		return false;
-	return x[CRUISE_TIME_P] < y[CRUISE_TIME_P];
-}
-
-bool x_fast_cheaper_y(const weights_t&  x, const weights_t& y){
-	if (x[CRUISE_TIME_P] < y[CRUISE_TIME_P]){
-		return true;
-	}
-	else if (x[CRUISE_TIME_P] > y[CRUISE_TIME_P]){
-		return false;
-	}
-	return x[CRUISE_FARE_P] < y[CRUISE_FARE_P];
-}
+#include "SearchAlgorithms.hpp"
 
 SearchAlgorithm::SearchAlgorithm(graph_t *g){
 	this->max_weight =  std::numeric_limits<weight_t>::max();
@@ -50,7 +13,7 @@ SearchAlgorithm::SearchAlgorithm(graph_t *g, id_t to, id_t from):SearchAlgorithm
 Dijkstra::Dijkstra(graph_t* g): SearchAlgorithm(g) {};
 
 //нужно добавить location
-vector<Flight*> Dijkstra::calcOptRoute (id_t& from, id_t& to, weights_t lim,  criterion xlessy){
+vector<Flight*> Dijkstra::calcOptRoute (id_t& from, id_t& to, weights_t lims,  criterion xlessy){
 	// отчистить opt_route
 	this->previous.clear(); // прошлого нет
 	this->previous.resize(this->graph->size(), NULL); // не более чем количество вершин
@@ -129,18 +92,18 @@ vector<Flight*> Dijkstra::calcOptRoute (id_t& from, id_t& to, weights_t lim,  cr
 	return this->previous;
 };
 	
-Route* Dijkstra::restoreRoute(const id_t &to){
-	if (previous.size() == 0){
+Route Dijkstra::restoreRoute(const id_t &to){
+	if (this->previous.size() == 0){
 		// пустой путь
-		return NULL ;
+		throw std::runtime_error("previous.size() == 0");
 		}
-	Route *path = new Route(to);
+	Route path = Route(to);
 	id_t act = to;
 	while( act != this->from ){
 			if (this->previous[act] == NULL){
-				return NULL;
+				throw std::runtime_error("no previous element.");
 			}
-			path->push_front(this->previous[act]);
+			path->push_front( *(this->previous[act]));
 			act = this->previous[act]->get_from();
 		}
 	return path;
