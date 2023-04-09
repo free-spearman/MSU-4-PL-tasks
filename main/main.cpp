@@ -1,10 +1,10 @@
 #include "custom_types.hpp"
 #include "Graph.hpp"
 #include "Flight.hpp"
-#include "DataReader.hpp"
-
+//#include "DataReader.hpp"
+#include "Susanin.hpp"
 /*class Susanin
-{
+{test_input.txt
 public:
 	Susanin();
 	int loop(){
@@ -18,11 +18,14 @@ public:
 
 int main(int argc, char const *argv[])
 {	
-	Graph G = Graph();
+	Susanin gui;
+	gui.loop();
+	/*Graph G = Graph();
 	char name[] = "test_input.txt";
 	handle_file_input(G, name);
 	std::ofstream out;
 	out.open("result.txt");
-	G.printInFile(out);	
+	G.printInFile(out);
+	*/	
 	return 0;
 }

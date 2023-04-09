@@ -26,13 +26,16 @@ https://stackoverflow.com/questions/22429719/stdvector-or-stdlist-for-stdunorder
 
 ** я овощ, просто массив из 3-х элементов и рейс  
 */
-Flight::Flight(){};
+Flight::Flight(){
+	this->set_flag = false;
+};
 Flight::~Flight(){};
 
 Flight::Flight(id_t from){
 	this->from = from;
 	this->to = from;
 	SET_WEIGHTS_VAL(this->weights, 0);
+	this->set_flag = false;
 };
 
 Flight::Flight(id_t from,
@@ -51,7 +54,7 @@ Flight::Flight(id_t from,
 		this->weights[CRUISE_TIME_P] = cruise_time;
 		this->weights[CRUISE_FARE_P] = cruise_fare;
 		this->weights[NUM_LOCALS_P] = locals;
-
+		this->set_flag = true;
 };
 
 Flight::Flight(const Flight &ref){
@@ -59,6 +62,7 @@ Flight::Flight(const Flight &ref){
 	this->to = ref.to;
 	this->weights = ref.weights;
 	this->transport_type = ref.transport_type;
+	this->set_flag = true;
 }
 id_t  Flight::get_to() const{
 	return this->to;
@@ -82,6 +86,10 @@ std::string Flight::toString() const{
 	return std::to_string(this->get_to())+ " -> " + std::to_string(this->get_from());
 };
 
+bool Flight::isEmpty(){
+	return !this->set_flag; 
+};
+
 Route::Route(id_t from): Flight(from){
 	/*this->from = from;
 	this->to = from;
@@ -95,6 +103,11 @@ Route::Route(const Route &ref){
 	this->to = ref.to;
 	this->weights = ref.weights; 
 };
+
+Route::Route():Flight::Flight(){
+};
+
+Route::~Route(){};
 
 void Route::push_front(const Flight &f){
 	/*if (f == NULL)

@@ -25,22 +25,31 @@ public:
 class Graph {
 public:
 	Graph();
+	Graph(const Graph& ref);
 	~Graph();
-	id_t AddCity(const std::string name);
-	id_t AddTransport(const std::string name);
-	void AddFlight(id_t from,
+	id_t addCity(const std::string name);
+	id_t addTransport(const std::string name);
+	void addFlight(id_t from,
 		id_t to, 
 		id_t transport_type, 
 		weight_t time, 
 		weight_t fare, 
 		weight_t locals
 	);
-	id_t FindCityByName(const std::string name);
-	id_t FindTransportByName(const std::string name);
-	id_t GetNumCitys();
-	id_t GetNumTypeTransports();
+	id_t findCityByName(const std::string name) ;
+	id_t findTransportByName(const std::string name);
+	
+	std::string findCityById(const id_t id) ;
+	std::string findTransportById(const id_t id);
+
+	id_t getNumCitys() const;
+	id_t getNumTypeTransports() const;
 	std::string flightsToString(const Flight& flight);
 	void printInFile(std::ofstream& out);
+	id_t size() const;
+	location& operator[] (int i) { return this->flights[i]; };
+	const location& operator[](int i) const{ return this->flights[i]; };
+
 
 
 protected:

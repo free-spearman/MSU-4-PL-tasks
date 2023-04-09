@@ -16,6 +16,7 @@ protected:
 
 public:
 	weights_t();
+	weights_t(weight_t w);
 	weights_t(weight_t* w);
 	weights_t(const weights_t & ref);
 	//тип weights_t::оpеrator[](int i);

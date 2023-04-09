@@ -23,6 +23,7 @@ class Flight{
 private:
 	id_t transport_type;
 protected:
+	bool set_flag;
 	id_t from;
 	id_t to;
 	weights_t weights; 
@@ -44,6 +45,7 @@ public:
 	weights_t get_weights() const;
 	std::string toString() const;
 	id_t get_transport() const;
+	bool isEmpty();
 };
 
 //using graph_t = vector<vector<Flight*>>;
@@ -53,6 +55,7 @@ class Route: public Flight {
 protected:
 	std::list<Flight> flights;
 public:
+	Route();
 	Route(id_t from);
 	Route(const Route& ref);
 	void push_front(const Flight& f);

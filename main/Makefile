@@ -17,10 +17,12 @@ DataReader.o: DataReader.cpp
 	g++ -o DataReader.o -c DataReader.cpp
 SearchAlgorithms.o: SearchAlgorithms.cpp
 	g++ -o SearchAlgorithms.o -c SearchAlgorithms.cpp  
+Susanin.o: Susanin.cpp
+	g++ -o Susanin.o -c Susanin.cpp 
 main.o:
 	g++ -o main.o -c main.cpp
-main: main.o DataReader.o Graph.o custom_types.o Flight.o
-	g++ -o main custom_types.o Flight.o Graph.o DataReader.o main.o     
+main: main.o Graph.o custom_types.o Flight.o SearchAlgorithms.o Susanin.o
+	g++ -o main custom_types.o Flight.o Graph.o main.o SearchAlgorithms.o Susanin.o -lncursesw   
 
 clean:
 	rm -rf *.o
