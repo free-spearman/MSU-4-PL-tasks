@@ -9,8 +9,11 @@
 #include <chrono>
 #include <sstream>
 
+#include "BaseLogger.hpp"
 #include "custom_types.hpp"
+
 #include "Graph.hpp"
+
 #include "SearchAlgorithms.hpp"
 
 #define ctrl(x) (x & 0x1F)
@@ -19,7 +22,7 @@
 
 float estimate_time(const std::chrono::steady_clock::duration &start_time_duration);
 
-class Susanin
+class Susanin: public BaseLogger 
 {
 protected:
 	Graph graph;
@@ -29,7 +32,7 @@ protected:
 	std::string intInputhandler();
 	std::string stringInputHandler(int row);
 	int finishAppHandler();
-	bool addRestrictedTransportHandler(SearchAlgorithm& s);
+	bool addRestrictedTransportHandler( SearchAlgorithm& s);
 	id_t getCityHandler(Graph &graph, bool to_city);
 	std::string formatString(const std::string &input);
 	void beginLoop();

@@ -19,6 +19,9 @@ public:
 int main(int argc, char const *argv[])
 {	
 	Susanin gui;
+	//я пока не сделал обработку акс
+	//так что файл по умолчанию для графа test_input.txt 
+	gui.beginLogMess();
 	gui.loop();
 	/*Graph G = Graph();
 	char name[] = "test_input.txt";

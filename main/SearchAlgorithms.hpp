@@ -3,7 +3,7 @@
 
 #include "custom_types.hpp"
 #include "Graph.hpp"
-
+//#include "BaseLogger.hpp"
 
 class SearchAlgorithm { 
 protected:
