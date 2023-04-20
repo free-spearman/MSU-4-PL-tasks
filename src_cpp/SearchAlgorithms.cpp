@@ -108,7 +108,7 @@ std::vector<Flight> Dijkstra::calcOptRoute (id_t& from, id_t& to, criterion xles
   	
   	struct cust_compare {
 		bool operator()(const std::pair<weights_t, id_t>& p1,
-                    const std::pair<weights_t, id_t>& p2){
+                    const std::pair<weights_t, id_t>& p2) const{
 			if ( p1.second == p2.second)
 				return x_fast_cheaper_y(p1.first, p2.first);  
 			return p1.second < p2.second;
