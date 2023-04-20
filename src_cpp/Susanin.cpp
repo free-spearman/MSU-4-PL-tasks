@@ -189,6 +189,10 @@ int Susanin::loop(){
                     const auto log_title = "Путь минимальной стоимости среди кратчайших по времени";
                     const auto city_from_title = "Город отправления: " + graph.findCityById(from) ;
                     const auto city_to_title = "Город прибытия: " + graph.findCityById(to);
+                    
+                    printw(path.toString().c_str());
+                    printw(path.routeToString().c_str());
+
                     attroff(COLOR_PAIR(4));    
                 }
                 catch (std::runtime_error& e){

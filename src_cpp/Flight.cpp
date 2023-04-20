@@ -83,7 +83,11 @@ weights_t Flight::get_weights() const{
 };
 ///
 std::string Flight::toString() const{
-	return std::to_string(this->get_to())+ " -> " + std::to_string(this->get_from());
+	std::string s = std::to_string(this->get_to())+ " -> " + std::to_string(this->get_from());
+	s +=" CRUISE_TIME:" + std::to_string(this->weights[CRUISE_TIME_P]);
+	s +=" CRUISE_FARE:" + std::to_string(this->weights[CRUISE_FARE_P]);
+
+	return s; 
 };
 
 bool Flight::isEmpty(){
@@ -123,7 +127,19 @@ void Route::push_front(const Flight &f){
 	ADD_WEIGHTS(this->weights, this->weights, w);   
 };
 
+std::string Route::toString() const{
+	std::string s = Flight::toString();
+	s+= " NUM_LOCALS:" + std::to_string(this->weights[NUM_LOCALS_P]);
+	return s;
+};
 
+std::string Route::routeToString() const{
+	std::string s;
+	for(auto ticket :this->flights){
+		s+= ticket.toString() + "\n";
+	}
+	return s;
+};
 /*
 class Route: public Flight{
 protected:

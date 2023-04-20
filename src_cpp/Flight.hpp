@@ -58,6 +58,8 @@ public:
 	Route();
 	Route(id_t from);
 	Route(const Route& ref);
+	std::string toString() const;
+	std::string routeToString() const; 
 	void push_front(const Flight& f);
 	~Route();	
 };
