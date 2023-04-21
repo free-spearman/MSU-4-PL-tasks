@@ -22,7 +22,7 @@
 
 float estimate_time(const std::chrono::steady_clock::duration &start_time_duration);
 
-class Susanin: public BaseLogger 
+class Susanin: public ProcessLogger 
 {
 protected:
 	Graph graph;

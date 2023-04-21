@@ -8,7 +8,7 @@ float estimate_time(const std::chrono::steady_clock::duration &start_time_durati
     return std::chrono::duration<float>(time).count();
 }
 
-Susanin::Susanin():BaseLogger(typeid(this).name()){
+Susanin::Susanin():ProcessLogger(typeid(this).name()){
     this->ds_file_name = "test_input.txt";
 };
 
@@ -179,19 +179,26 @@ int Susanin::loop(){
                 //запуск поиска
                 this->startLog("поиск среди кратчайших по времени минимальный по стоимости");
                 try{
-                    const auto path = sercher.findFastRoute(to, from);
+                    const auto log_title = "Путь минимальной стоимости среди кратчайших по времени";
+                    //const auto city_from_title = "id:"+ std::to_string(from)+ " name:" + graph.findCityById(from);
+                    //const auto city_to_title = "id:"+ std::to_string(to)+ " name:" + graph.findCityById(to);
+                    //this->log(city_from_title.c_str(), "city_from_title");
+                    //this->log(city_to_title.c_str(), "city_to_title");
+                    //this->log(graph.findCityById(from),"findFastRoute:from");
+                    const auto path = sercher.findFastRoute(from, to);
                     this->endLog();
                     total_time = estimate_time(start_time.time_since_epoch());
-
-                    printw("Искомый путь: \n");
-                    attron(COLOR_PAIR(4));
-                    printw("тут путь:");
-                    const auto log_title = "Путь минимальной стоимости среди кратчайших по времени";
-                    const auto city_from_title = "Город отправления: " + graph.findCityById(from) ;
-                    const auto city_to_title = "Город прибытия: " + graph.findCityById(to);
                     
-                    printw(path.toString().c_str());
-                    printw(path.routeToString().c_str());
+                    //printw("Искомый путь: \n");
+                    attron(COLOR_PAIR(4));
+                    std::string path_strign = graph.routeToString(path);
+
+                    //const auto log_title = "Путь минимальной стоимости среди кратчайших по времени";
+                    //const auto city_from_title = "Город отправления: " + graph.findCityById(from) ;
+                    //const auto city_to_title = "Город прибытия: " + graph.findCityById(to);
+                    printw(log_title);
+                    this->log(path_strign.c_str(), "findFastRoute::");
+                    mvprintw(3, 0, path_strign.c_str());
 
                     attroff(COLOR_PAIR(4));    
                 }

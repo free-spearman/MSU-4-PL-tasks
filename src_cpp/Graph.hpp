@@ -44,7 +44,8 @@ public:
 
 	id_t getNumCitys() const;
 	id_t getNumTypeTransports() const;
-	std::string flightsToString(const Flight& flight);
+	std::string flightToString(const Flight& flight);
+	std::string routeToString(const Route& path);
 	void printInFile(std::ofstream& out);
 	id_t size() const;
 	location& operator[] (int i) { return this->flights[i]; };

@@ -5,7 +5,7 @@
 #include "Graph.hpp"
 //#include "BaseLogger.hpp"
 
-class SearchAlgorithm { 
+class SearchAlgorithm: public ProcessLogger { 
 protected:
 	/* *** Блок пути ***  */
 	Route actl_rout;

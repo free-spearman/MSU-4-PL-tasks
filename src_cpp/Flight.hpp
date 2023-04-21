@@ -8,8 +8,10 @@
 #include <vector>
 #include <stdexcept>
 #include <limits>
+#include <cmath>
 
 #include "custom_types.hpp"
+#include "BaseLogger.hpp"
 //#include
 //#include <stdint.h> 
 
@@ -19,7 +21,7 @@
 
 //using namespace std;
 
-class Flight{
+class Flight: public BaseLogger{
 private:
 	id_t transport_type;
 protected:
@@ -37,7 +39,7 @@ public:
 		weight_t cruise_time,
 		weight_t cruise_fare,
 		weight_t locals);
-	
+	Flight& operator= (const Flight& ref);
 	~Flight();
 	id_t get_to() const;
 	id_t get_from() const;
@@ -45,7 +47,8 @@ public:
 	weights_t get_weights() const;
 	std::string toString() const;
 	id_t get_transport() const;
-	bool isEmpty();
+	void filled();
+	bool isEmpty()const;
 };
 
 //using graph_t = vector<vector<Flight*>>;
@@ -58,9 +61,17 @@ public:
 	Route();
 	Route(id_t from);
 	Route(const Route& ref);
+
+	weight_t size() const;
+	Flight& operator[] (int i);
+	const Flight& operator[](int i) const;
+
+	std::list<Flight>::const_iterator getFlightIter() const;
+
 	std::string toString() const;
 	std::string routeToString() const; 
 	void push_front(const Flight& f);
+	void push_back(const Flight &f);
 	~Route();	
 };
 

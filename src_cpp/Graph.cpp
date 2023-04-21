@@ -115,15 +115,37 @@ id_t Graph::getNumTypeTransports() const{
 	return this->transports.size(); 	
 };
  
-std::string Graph::flightsToString(const Flight& flight){ 
+std::string Graph::flightToString(const Flight& flight){ 
 	std::string from = this->citys_names[ flight.get_from()];
 	std::string to = this->citys_names[flight.get_to()];
 	std::string transport = this->transports_names[flight.get_transport()];
 	weights_t w = flight.get_weights();
-	std::string result = from + " -> " + to + " тр-рт:" + transport + " время:" + std::to_string(w[CRUISE_TIME_P]) + " цена:" + std::to_string(w[CRUISE_FARE_P]);  
+	std::string result = from + " -> " + to + " тр-рт:" + transport 
+		+ " время:" + std::to_string(w[CRUISE_TIME_P]) + " цена:" 
+		+ std::to_string(w[CRUISE_FARE_P]);  
 	//std::format("{} -> {} тр-рт{} время:{} цена:{} \n", from, to, transport, w[CRUISE_TIME_P], w[CRUISE_FARE_P]);
 	return result + "\n";
 };
+
+std::string Graph::routeToString(const Route& path){ 
+	std::string result = "Ваш путь:\n";
+	weight_t size = path.size();
+	auto iter = path.getFlightIter(); 
+	for(weight_t p = 0; p < size; p++, iter++){
+		result+= this->flightToString(*iter); 
+	}
+
+	std::string from = this->citys_names[ path.get_from()];
+	std::string to = this->citys_names[path.get_to()];
+	weights_t w = path.get_weights();
+	result += "Итог:\n" + from + " -> " + to 
+		+ " время:" + std::to_string(w[CRUISE_TIME_P]) 
+		+ " цена:" + std::to_string(w[CRUISE_FARE_P])
+		+ " локации:" + std::to_string(w[NUM_LOCALS_P]);  
+	//std::format("{} -> {} тр-рт{} время:{} цена:{} \n", from, to, transport, w[CRUISE_TIME_P], w[CRUISE_FARE_P]);
+	return result + "\n";
+};
+
 //вывод в файл, надо сделать оператор <<
 void Graph::printInFile(std::ofstream& out){
 	if ( ! out.is_open()){
@@ -131,7 +153,7 @@ void Graph::printInFile(std::ofstream& out){
 	}
 	for( location loc :this->flights ){
 		for(Flight f :loc){
-			out<<(this->flightsToString(f)); 
+			out<<(this->flightToString(f)); 
 		}
 	}
 	out<<std::endl;

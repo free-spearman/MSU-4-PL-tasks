@@ -39,7 +39,7 @@ bool x_fast_cheaper_y(const weights_t&  x, const weights_t& y){
 
 
 
-SearchAlgorithm::SearchAlgorithm(){
+SearchAlgorithm::SearchAlgorithm():ProcessLogger("SearchAlgorithm"){
 	this->lims = weights_t(std::numeric_limits<weight_t>::max());
 }; 
 
@@ -103,7 +103,7 @@ std::vector<Flight> Dijkstra::calcOptRoute (id_t& from, id_t& to, criterion xles
     		/*for (size_t v = 0; v < NUM_RT_PARM; v++ )
     			(*itr)[v] = numeric_limits<weight_t>::max();
     		*/
-    	} 
+    } 
 
   	
   	struct cust_compare {
@@ -166,30 +166,38 @@ std::vector<Flight> Dijkstra::calcOptRoute (id_t& from, id_t& to, criterion xles
 	     			SET_WEIGHTS_WEIGHTS (this->opt_distance[to_vertx], distance_through_act);
 					
 					this->previous[to_vertx] = *neighbor_iter; //тут должно быть по идее ребро ыаыаыаыва
-					
+					//this->log(this->previous[to_vertx].toString().c_str(), "this->previous[to_vertx]169");
 					vertex_queue.insert(std::make_pair(this->opt_distance[to_vertx], to_vertx));
 				}
 			}
 		}
-	this->setting_f = true; 
+	this->setting_f = true;
+
+	this->log("return", "calcOptRoute176");
+
 	return this->previous;
 };
 	
 Route Dijkstra::restoreRoute(const id_t &to){
 	if (this->previous.size() == 0){
 		// пустой путь
-
+		this->log("this->previous.size() == 0","restoreRoute182");
 		throw std::runtime_error("previous.size() == 0");
 		}
 	Route path = Route(to);
+	this->log(path.toString().c_str(),"Route(to)188");
 	id_t act = to;
+	this->log(std::to_string(this->from).c_str(),"this->from191");
 	while( act != this->from ){
 			if ( this->previous[act].isEmpty()){
 				throw std::runtime_error("no previous element.");
 			}
+			this->log(this->previous[act].toString().c_str(),"this->previous[act]194");
 			path.push_front(this->previous[act]);
 			act = this->previous[act].get_from();
 		}
+	//поставить флаг, что путь полный
+	path.filled(); 
 	return path;
 }
 
@@ -200,7 +208,9 @@ Route Dijkstra::findFastRoute (id_t& from, id_t& to){
 	if (from == to){
 		throw std::domain_error("from = to");
 	}
+	this->from = from;
 	this->calcOptRoute(from, to, x_faster_y);
+
 	return this->restoreRoute(to);
 	
 };
