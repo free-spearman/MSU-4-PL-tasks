@@ -9,7 +9,26 @@ float estimate_time(const std::chrono::steady_clock::duration &start_time_durati
 }
 
 Susanin::Susanin():ProcessLogger(typeid(this).name()){
-    this->ds_file_name = "test_input.txt";
+    this->beginLogMess();
+};
+
+
+Susanin::Susanin(const char *ds_name):ProcessLogger(typeid(this).name()){
+    this->ds_file_name = ds_name;
+    this->beginLogMess();
+    this->log(this->ds_file_name.c_str(), "Susanin init");
+};
+
+void Susanin::setDS(){
+    std::cout<<"Введите имя файла с билетами"<<std::endl;
+    std::cin>>this->ds_file_name;
+    std::cout<<"Вы ввели:"<<this->ds_file_name<<"\n Начинаю рабоут ..."<<std::endl;
+    this->log(this->ds_file_name.c_str(), "Susanin setDS");
+};
+
+void Susanin::setDS(const char *ds_name){
+    this->ds_file_name = ds_name;
+    this->log(this->ds_file_name.c_str(), "Susanin setDS");
 };
 
 Susanin::~Susanin(){};

@@ -19,9 +19,13 @@ public:
 int main(int argc, char const *argv[])
 {	
 	Susanin gui;
-	//я пока не сделал обработку акс
-	//так что файл по умолчанию для графа test_input.txt 
-	gui.beginLogMess();
+	if (argc > 2){
+ 		gui.setDS(argv[1]);
+	}
+	else{
+		gui.setDS();	
+	}
+
 	gui.loop();
 	/*Graph G = Graph();
 	char name[] = "test_input.txt";
@@ -29,6 +33,6 @@ int main(int argc, char const *argv[])
 	std::ofstream out;
 	out.open("result.txt");
 	G.printInFile(out);
-	*/	
+	*/
 	return 0;
 }

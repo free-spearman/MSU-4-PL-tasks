@@ -56,7 +56,15 @@ protected:
 
 public:
 	Susanin();
+	Susanin(const char *ds_name);	
+
+	void setDS();
+	void setDS(const char *ds_name);
+
 	void readGraph(Graph &graph);
+
+		
+
 
 	int loop();
 	~Susanin();
