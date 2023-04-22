@@ -32,7 +32,8 @@ protected:
 	std::string intInputhandler();
 	std::string stringInputHandler(int row);
 	int finishAppHandler();
-	bool addRestrictedTransportHandler( SearchAlgorithm& s);
+	weight_t RestrictedWeightsHandler(const char *mess);
+	int addRestrictedTransportHandler( SearchAlgorithm& s);
 	id_t getCityHandler(Graph &graph, bool to_city);
 	std::string formatString(const std::string &input);
 	void beginLoop();

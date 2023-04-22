@@ -19,7 +19,7 @@ public:
 int main(int argc, char const *argv[])
 {	
 	Susanin gui;
-	if (argc > 2){
+	if (argc > 1){
  		gui.setDS(argv[1]);
 	}
 	else{
