@@ -67,7 +67,7 @@ public:
 	const Flight& operator[](int i) const;
 
 	std::list<Flight>::const_iterator getFlightIter() const;
-
+	Route operator + (const Route& ref) const;
 	std::string toString() const;
 	std::string routeToString() const; 
 	void push_front(const Flight& f);

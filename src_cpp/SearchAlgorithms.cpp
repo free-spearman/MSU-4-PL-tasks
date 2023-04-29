@@ -275,7 +275,7 @@ Route Dijkstra::findFastCheaperRoute(const id_t& from, const id_t& to) {
 	this->calcOptRoute(from, to, x_fast_cheaper_y);
 	return this->restoreRoute(to);
 };
-//not done 
+//not done  
 std::list<Route> Dijkstra::findSetCitiesLimTime(const id_t& from) {
 	//this->log("start","findSetCitiesLimTime");
 	this->from = from;

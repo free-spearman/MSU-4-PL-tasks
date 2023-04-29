@@ -252,18 +252,24 @@ int Susanin::loop(){
         sercher.resetRestrictionsTransport();
         while(this->addRestrictedTransportHandler(sercher) != 0);
         this->log(sercher.getProhibitedTransport().c_str(), "RestrictedTransportHandler"); 
-
+        //
         weights_t limits;
+        limits[CRUISE_FARE_P] = std::numeric_limits<weight_t>::max();
+        limits[NUM_LOCALS_P] = std::numeric_limits<weight_t>::max();
+        limits[CRUISE_TIME_P] = std::numeric_limits<weight_t>::max();
+        if (result == 3){
+            limits[CRUISE_FARE_P] = this->RestrictedWeightsHandler("цене\n");    
+        }
+        if (result == 4){
+            limits[CRUISE_TIME_P] = this->RestrictedWeightsHandler("времени\n");
+        }
 
-        limits[CRUISE_TIME_P] = this->RestrictedWeightsHandler("времени\n");
-        limits[CRUISE_FARE_P] = this->RestrictedWeightsHandler("цене\n");
-        limits[NUM_LOCALS_P] = this->RestrictedWeightsHandler("количеству пересадок\n");
+        
         std::string weights_log = std::to_string(limits[CRUISE_TIME_P]) + std::to_string(limits[CRUISE_FARE_P]) + std::to_string(limits[NUM_LOCALS_P]);
         this->log( weights_log.c_str(), "ограничения");
 
-
         sercher.setLimits(limits);
-        
+        //
         clear();
         refresh();
         this->log("До switch", "loop");
@@ -271,7 +277,7 @@ int Susanin::loop(){
             //среди кратчайших по времени минимальный по стоимости
             case 0:{
                 //запуск поиска
-                this->startLog("поиск среди кратчайших по времени минимальный по стоимости");
+                this->startLog("case0");
                 try{
                     const auto log_title = "Путь минимальной стоимости среди кратчайших по времени";
                     //const auto city_from_title = "id:"+ std::to_string(from)+ " name:" + graph.findCityById(from);
@@ -309,7 +315,7 @@ int Susanin::loop(){
             }
             //путь минимальной стоимости 
             case 1:{
-                this->startLog("путь минимальной стоимости");
+                this->startLog("case1");
                 try{
                     const auto log_title = "Путь минимальной стоимости";
                     //const auto city_from_title = "id:"+ std::to_string(from)+ " name:" + graph.findCityById(from);
@@ -345,7 +351,7 @@ int Susanin::loop(){
             }
             //путь минимальный по числу посещенных городов
             case 2:{
-                this->startLog("путь минимальный по числу посещенных городов");
+                this->startLog("case2");
                 try{
                     const auto log_title = "Путь минимальный по числу посещенных городов";
                     //const auto city_from_title = "id:"+ std::to_string(from)+ " name:" + graph.findCityById(from);
@@ -381,7 +387,7 @@ int Susanin::loop(){
             case 3:
                 this->log(std::to_string(result).c_str(), "case3");
                 try{
-                    auto log_title = "Мно-во достижимых из города отправления  не более чем за обозначенное время\n";
+                    auto log_title = "Мно-во достижимых из города отправления  не более чем за обозначенную сумму денег\n";
                     //const auto city_from_title = "id:"+ std::to_string(from)+ " name:" + graph.findCityById(from);
                     //const auto city_to_title = "id:"+ std::to_string(to)+ " name:" + graph.findCityById(to);
                     //this->log(city_from_title.c_str(), "city_from_title");
@@ -393,15 +399,20 @@ int Susanin::loop(){
                     //printw("Искомый путь: \n");
                     attron(COLOR_PAIR(4));
                     printw(log_title);
-                    for (auto path: paths){
-                        std::string path_strign = graph.routeToString(path);    
-                        
-                        std::string city_to_title = graph.findCityById(path.get_to()) + "\n";
-                        this->log(path_strign.c_str(), city_to_title.c_str());
-                        
-                        printw(city_to_title.c_str());
-                        printw(path_strign.c_str());
-                        printw("\n");
+                    if (paths.size() >= 1){
+
+                        for (auto path: paths){
+                            std::string path_strign = graph.routeToString(path);    
+                            //this->log(path_strign.c_str(), "findShortRoute::");
+                            std::string city_to_title = graph.findCityById(path.get_to()) + "\n";
+                            this->log(path_strign.c_str(), city_to_title.c_str());
+                            printw(city_to_title.c_str());
+                            printw(path_strign.c_str());
+                            printw("\n");
+                        }
+                    }    
+                    else {
+                        printw("Путей нет");
                     }
                     attroff(COLOR_PAIR(4));
 
@@ -411,6 +422,13 @@ int Susanin::loop(){
                     
                         
                 }
+                    //attroff(COLOR_PAIR(4));
+
+                    //const auto log_title = "Путь минимальной стоимости среди кратчайших по времени";
+                    //const auto city_from_title = "Город отправления: " + graph.findCityById(from) ;
+                    //const auto city_to_title = "Город прибытия: " + graph.findCityById(to);
+                    
+                 
                 catch (std::runtime_error& e){
                     this->endLog();
                     printw("Пути нет");
@@ -435,14 +453,20 @@ int Susanin::loop(){
                     //printw("Искомый путь: \n");
                     attron(COLOR_PAIR(4));
                     printw(log_title);
-                    for (auto path: paths){
-                        std::string path_strign = graph.routeToString(path);    
-                        //this->log(path_strign.c_str(), "findShortRoute::");
-                        std::string city_to_title = graph.findCityById(path.get_to()) + "\n";
-                        this->log(path_strign.c_str(), city_to_title.c_str());
-                        printw(city_to_title.c_str());
-                        printw(path_strign.c_str());
-                        printw("\n");
+                    if (paths.size() >= 1){
+
+                        for (auto path: paths){
+                            std::string path_strign = graph.routeToString(path);    
+                            //this->log(path_strign.c_str(), "findShortRoute::");
+                            std::string city_to_title = graph.findCityById(path.get_to()) + "\n";
+                            this->log(path_strign.c_str(), city_to_title.c_str());
+                            printw(city_to_title.c_str());
+                            printw(path_strign.c_str());
+                            printw("\n");
+                        }
+                    }
+                    else {
+                        printw("Путей нет");
                     }
                     attroff(COLOR_PAIR(4));
 
@@ -454,7 +478,7 @@ int Susanin::loop(){
                 }
                 catch (std::runtime_error& e){
                     this->endLog();
-                    printw("Пути нет");
+                    printw("Путей нет");
                 }
                 catch (std::domain_error& e){
                     this->endLog();
@@ -499,6 +523,8 @@ int Susanin::loop(){
 //done
 int Susanin::modeInputHandler(){
     this->log("Начало модуля", "modeInputHandler");
+    clear();
+    refresh();
     curs_set(0);
     id_t chosen_mode = 0;
     const unsigned int modes_count = 6;
@@ -688,7 +714,7 @@ id_t Susanin::getCityHandler(Graph &graph, bool to_city){
 
     move(1, 0);
 
-    this->log("move", "getCityHandler");
+    //this->log("move", "getCityHandler");
     refresh();
     
     std::string city_name = this->stringInputHandler(1);

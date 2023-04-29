@@ -18,6 +18,7 @@
 #define LOGNAME "log.txt"
 /*
 
+То, что осталось, можно запихать в csv 
 */
 
 using hrc_lock_t = std::chrono::time_point<std::chrono::high_resolution_clock>;

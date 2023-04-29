@@ -17,6 +17,9 @@ REQ_NAME=BaseLogger Flight custom_types Graph SearchAlgorithms main Susanin
 REQ=$(addsuffix .o,$(addprefix $(CC_OBJ_FOLDER)/, $(REQ_NAME))) 
 .PHONY: all clean install uninstall
 
+build: build_dir $(REQ_NAME)  
+	$(CXX) $(CXX_FLAGS) $(REQ)  $(LIBS) -o $(NAME)
+
 print:
 	echo $(REQ)
 	echo $(REQ_NAME)
@@ -41,8 +44,7 @@ test: test.cpp BaseLogger.o
 	$(CXX_WITHOUT_LINK)
 main:$(CC_SRC_FOLDER)/main.cpp
 	$(CXX_WITHOUT_LINK)
-build: build_dir $(REQ_NAME)  
-	$(CXX) $(CXX_FLAGS) $(REQ)  $(LIBS) -o $(NAME) 
+
 rebuild: $(REQ)
 	$(CXX) $(CXX_FLAGS) $(REQ)  $(LIBS) -o $(NAME)
 run: $(NAME)

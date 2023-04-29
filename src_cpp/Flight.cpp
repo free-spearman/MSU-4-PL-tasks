@@ -184,9 +184,9 @@ Flight& Route::operator[] (int i) {
 	auto iter = this->flights.begin();
 	for (id_t j = 0; j < position ; iter++, j++);
 
-	std::string log_str = "call:" + std::to_string(i)  
-		+ "\n return:\n" + iter->toString();
-	this->log(log_str.c_str(), "Route::operator[]");  
+	/*std::string log_str = "call:" + std::to_string(i)  
+		+ "\n return:\n" + iter->toString();*/
+	//this->log(log_str.c_str(), "Route::operator[]");  
 	
 	return *iter; 
 };
@@ -200,10 +200,10 @@ const Flight& Route::operator[](int i) const{
 	
 	for (id_t j = 0; j < position ; iter++, j++);
 
-	std::string log_str = "call:" + std::to_string(i)  
-		+ "\n return:\n" + iter->toString();
+	/*std::string log_str = "call:" + std::to_string(i)  
+		+ "\n return:\n" + iter->toString();*/
 	
-	this->log_const(log_str.c_str(), "Route::operator[]");  
+	//this->log_const(log_str.c_str(), "Route::operator[]");  
 	return *iter;
 };
 
@@ -214,7 +214,7 @@ std::list<Flight>::const_iterator Route::getFlightIter() const{
 std::string Route::toString() const{
 	std::string s = Flight::toString();
 	s+= " NUM_LOCALS:" + std::to_string(this->weights[NUM_LOCALS_P]);
-	this->log_const(s.c_str(), "Route::toString()::146");
+	//this->log_const(s.c_str(), "Route::toString()::146");
 	return s;
 };
 
@@ -224,9 +224,26 @@ std::string Route::routeToString() const{
 	for(auto ticket :this->flights){
 		s+= ticket.toString() + "\n";
 	}
-	this->log_const(s.c_str(), "routeToString::153");
+	//this->log_const(s.c_str(), "routeToString::153");
 	return s;
 };
+Route Route::operator + (const Route& ref) const{
+	if (this->get_to() == ref.get_from()){
+		Route np = *this;
+		weight_t len_path = ref.size();
+		for(weight_t i = 0; i < len_path; i++)
+			np.push_back(ref[i]);
+		return np;
+	}
+	if (ref.get_to() == this->get_from() ){
+		Route np = ref;
+		weight_t len_path = this->size();
+		for(weight_t i = 0; i < len_path; i++)
+			np.push_back((*this)[i]);
+		return np;
+	}
+	throw std::domain_error("Разрывный путь");  
+}
 
 /*
 class Route: public Flight{
