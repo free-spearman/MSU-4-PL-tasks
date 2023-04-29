@@ -4,6 +4,9 @@
 #	<команда #1>
 #	...
 #	<команда #n>
+PY=python3
+PY_FLAGS=-m
+PY_PACK=py
 CC_SRC_FOLDER = src_cpp
 CC_OBJ_FOLDER = build
 CXX=g++
@@ -19,10 +22,8 @@ REQ=$(addsuffix .o,$(addprefix $(CC_OBJ_FOLDER)/, $(REQ_NAME)))
 
 build: build_dir $(REQ_NAME)  
 	$(CXX) $(CXX_FLAGS) $(REQ)  $(LIBS) -o $(NAME)
-
-print:
-	echo $(REQ)
-	echo $(REQ_NAME)
+python: py
+	$(PY) $(PY_FLAGS) $(PY_PACK)
 build_dir:
 	mkdir $(CC_OBJ_FOLDER) 
 
