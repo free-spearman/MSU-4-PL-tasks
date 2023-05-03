@@ -10,7 +10,7 @@ protected:
 	id_t id;
 	vector<Flight> flights; //нужен лю using?
 public:
-
+ 
 	Location(id_t id);
 	~Location();
 };
@@ -101,16 +101,19 @@ class Graph:
 		"""id_t find_city_by_name(const std::string name);"""
 		if name in self.citys_names:
 			return self.citys_names[name]
+		return -1
 		raise ValueError("there is no such city")
 	def find_transport_by_name(self, name: str):
 		"""id_t findTransportByName(const std::string name);"""
 		if name in self.transports_name_id:
 			return self.transports_name_id[name]
+		return -1
 		raise ValueError("there is no such transport")
 	def find_city_by_id(self, id_city: int):
 		"""std::string findCityById(const id_t id);"""
 		if id_city < self.num_citys:
 			return self.citys[id_city]
+		return -1
 		raise ValueError("there is no such city")
 		pass
 	def find_transport_by_id(self, id_tr: int):

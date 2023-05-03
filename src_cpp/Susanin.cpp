@@ -234,7 +234,7 @@ int Susanin::loop(){
         if (result == -1){
             break;
         }
-        this->log("clear", "запрос пользователя");
+        //this->log("clear", "запрос пользователя");
         this->startLog("Запрос пользователя");
         //получаем город отравления
         id_t from = this->getCityHandler(graph, false);

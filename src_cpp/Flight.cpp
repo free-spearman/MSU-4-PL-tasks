@@ -118,6 +118,8 @@ void Flight::filled(){
 	this->set_flag = true;
 };
 bool Flight::isEmpty() const{
+	if (this->weights[NUM_LOCALS_P] == 0)
+		return true;
 	return !this->set_flag; 
 };
 
