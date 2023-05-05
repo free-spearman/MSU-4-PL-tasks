@@ -103,7 +103,7 @@ class Graph:
 			return self.citys_names[name]
 		return -1
 		raise ValueError("there is no such city")
-	def find_transport_by_name(self, name: str):
+	def find_transport_by_name(self, name):
 		"""id_t findTransportByName(const std::string name);"""
 		if name in self.transports_name_id:
 			return self.transports_name_id[name]

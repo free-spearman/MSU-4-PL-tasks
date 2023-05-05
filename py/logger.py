@@ -11,11 +11,19 @@ class BaseLogger():
 	"""docstring for BaseLogger"""
 	def __init__(self, log_name, class_name):
 		self.log_name = log_name
-		self.class_name = class_name
+		self.class_name = "python::" + class_name
 		self.start_times = deque()
 		self.call_stack = deque()
 		self.out = open(self.log_name, 'a')
 		self.out.write(f"\nBEGIN LOG:{BaseLogger.time_label()}\n\n")
+	def open_log(self):
+		self.out = open(self.log_name, 'a')
+	def close_log(self):
+		self.out.close()
+	def reopen_log(self):
+		self.close_log()
+		self.open_log()
+
 	def time_label():
 		"""возвращает временную метку %d-%m-%Y %H:%M:%S """
 		label_tm = datetime.now()
@@ -32,6 +40,7 @@ class BaseLogger():
 
 		self.out.write(prefix)
 		self.out.write(out_sring)
+		self.out.write("\n\n")
 		pass
 	def start_log(self, operation):
 		self.call_stack.append(operation)
@@ -47,6 +56,7 @@ class BaseLogger():
 		out_sring = f"время:{(end_time - start_time)/10**9}|память:{BaseLogger.get_mem()}\n"
 		self.out.write(prefix)
 		self.out.write(out_sring)
+		self.out.write("\n\n")
 		pass
 	def end(self):
-		close(self.out)
+		self.out.close()

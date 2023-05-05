@@ -7,8 +7,8 @@ class weights_t:
 		return self.__weights__[index]
 	def __add__(self, other):
 		res = weights_t()
-		for p in self.weights:
-			res[p] = self[p] + other[p]
+		for p in self.__weights__:
+			res.__weights__[p] = self[p] + other[p]
 		return res
 	def __str__(self):
 		return f"time:{self['time']}|fare:{self['fare']}|locals{self['locals']}" 

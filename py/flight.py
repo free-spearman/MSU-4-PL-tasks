@@ -23,20 +23,26 @@ class Flight:
 	def filled(self):
 		self.__set_flag__ = True 
 	def is_empty(self):
+		if self.weights['locals'] == 0:
+			return True
 		return not self.__set_flag__
 	def __str__(self):
 		return f"from:{self.from_city}| to: {self.to_city}|{self.weights} |{self.transport_type}"
 
 class Route(Flight):
-	def __init__(self, from_city = -1):
-		self.from_city = from_city
-		self.to_city = from_city
+	def __init__(self, to_city = -1):
+		self.from_city = to_city
+		self.to_city = to_city
 		self.path = DoublyLinkedList()
 		self.weights = weights_t()
 
-	def push_front(self, flight):
-		self.path.prepend(flight)
+	def push_front(self, fl):
+		self.from_city = fl.from_city
+		self.weights = self.weights + fl.weights
+		self.path.prepend(fl)
 		pass
-	def push_back(self, flight):
-		self.path.append(flight)	
+	def push_back(self, fl):
+		self.to_city = fl.to_city
+		self.weights = self.weights + fl.weights
+		self.path.append(fl)	
 		pass

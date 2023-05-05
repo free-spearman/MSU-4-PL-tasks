@@ -23,7 +23,7 @@ REQ=$(addsuffix .o,$(addprefix $(CC_OBJ_FOLDER)/, $(REQ_NAME)))
 build: build_dir $(REQ_NAME)  
 	$(CXX) $(CXX_FLAGS) $(REQ)  $(LIBS) -o $(NAME)
 python: py
-	$(PY) $(PY_FLAGS) $(PY_PACK)
+	$(PY) $(PY_FLAGS) $(PY_PACK) -h $(f)
 build_dir:
 	mkdir $(CC_OBJ_FOLDER) 
 

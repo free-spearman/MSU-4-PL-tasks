@@ -3,9 +3,17 @@ from py.flight import Flight
 from py.logger import BaseLogger
 from py.susanin import Susanin
 import curses as crs
+import argparse as arg
+
+parser = arg.ArgumentParser()
+parser.add_argument('file', help='path to file to be processed')
 
 def main(stdscr):
-	input_name = "25_cubes.txt"
+	args = parser.parse_args()
+	name = args.file.split('=')[1]
+	input_name = name 
+	#"input_small.txt"
+	#input_name = "25_cubes.txt"#
 	#graph = Graph()
 	#logger = BaseLogger("log.txt","MAIN") 
 	#logger.log("\n\nBEGIN\n\n", "main")
@@ -21,4 +29,6 @@ def main(stdscr):
 		print()
 	""" 
 if __name__ =="__main__":
+	
+	#print(name)
 	crs.wrapper(main)

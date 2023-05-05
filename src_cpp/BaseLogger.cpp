@@ -16,7 +16,7 @@ BaseLogger::BaseLogger(const char *class_name, const char *log_name){
 int BaseLogger::log(const char *out_sring,const char *operation){
 	std::ofstream out;
 	out.open(this->log_name, std::ios::app);
-	out<<this->class_name<<"::" <<operation<<":";
+	out<<this->class_name<<"::c++"<<"::" <<operation<<":";
 	std::time_t result = std::time(nullptr);
     out<<std::ctime(&result);	
 	out<<out_sring<<std::endl;
@@ -27,7 +27,7 @@ int BaseLogger::log(const char *out_sring,const char *operation){
 int BaseLogger::log_const(const char *out_sring,const char *operation) const{
 	std::ofstream out;
 	out.open(this->log_name, std::ios::app);
-	out<<this->class_name<<"::" <<operation<<":";
+	out<<this->class_name<<"::c++"<<"::" <<operation<<":";
 	std::time_t result = std::time(nullptr);
     out<<std::ctime(&result);	
 	out<<out_sring<<std::endl;
@@ -136,7 +136,7 @@ int ProcessLogger::endLog(){
 	
 	
 
-	this->out<<this->class_name<<"::" <<this->call_stack.top()<<":";
+	this->out<<this->class_name<<"::c++"<<"::" <<this->call_stack.top()<<":";
 	this->logTimeLabel();
 	
 	this->out<<"call:"<< this->call_stack.top()<<" time:"<<total_time;

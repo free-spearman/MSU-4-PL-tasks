@@ -56,6 +56,7 @@ class Susanin:
         self.crswin = crswin
         crs.noecho()
         crs.cbreak()
+        crswin.scrollok(True)
         #self.locale = crs.setlocale(crs.LC_ALL, "ru_RU.UTF-8")
         # cs.halfdelay(5)
         crs.start_color()
@@ -185,10 +186,9 @@ class Susanin:
 
         res = chosen_mode if chosen_mode != 5 else -1
         log_str = "Был выбран:" + str(res)
-        self.logger.log(log_str, "modeInputHandler")
+        self.logger.log("modeInputHandler", log_str)
         return res
         pass
-
     def finish_app_handler(self):
         """int finishAppHandler()"""
         crs.curs_set(0)
@@ -224,7 +224,6 @@ class Susanin:
 
         crs.curs_set(1)
         out_str = "Введите ограничение по"
-        out_str = out_str + mess
         self.crswin.addstr(0,0,out_str + mess)
     
         self.crswin.move(1, 0)
@@ -250,7 +249,7 @@ class Susanin:
         self.crswin.attron(crs.color_pair(3))
         self.crswin.addstr(0, 0, "######//~~~~~~//######")
         self.crswin.attroff(crs.color_pair(3))
-        out_str = "Введено ограничение: " + limit_input + "у. е." 
+        out_str = "Введено ограничение: " +  limit_input.decode() + "у. е." 
         if limit == 0:
             self.crswin.attron(crs.color_pair(2))
             self.crswin.addstr(2, 0, "Нет ограничения")
@@ -283,21 +282,22 @@ class Susanin:
         tr_name = self.string_input_handler(1)
         validation_input = True   
         while validation_input:
-          try:
-            if tr_name == ".":
-              validation_input = False
-              return 0
-              continue  
             
-            if s.add_restrictions_transport(tr_name): 
-              self.clear_n_lines(3, 4)
-              self.crswin.addstr(3, 0, "Введите корректный транспорт")
-              self.crswin.move(4, 0)
-              tr_name = self.string_input_handler(4)  
-          except ValueError:
-            pass
+            if tr_name == ".":
+                validation_input = False
+                return 0
+                continue  
+            
+            if not self.sercher.add_restrictions_transport(tr_name): 
+                self.clear_n_lines(3, 4)
+                self.crswin.addstr(3, 0, "Введите корректный транспорт")
+                self.crswin.move(4, 0)
+                tr_name = self.string_input_handler(4)
+            else:
+                validation_input = False  
+                #except ValueError:
+                #  pass
         self.clear_n_lines(0, 4)
-
         self.crswin.attron(crs.color_pair(3))
         self.crswin.addstr(0, 0, "######//~~~~~~//######")
         self.crswin.attroff(crs.color_pair(3))
@@ -367,10 +367,10 @@ class Susanin:
         return result
         pass
     def loop(self):
-        self.logger.log("Запуск программы", "loop")
+        #self.logger.log("Запуск программы", "loop")
         self.logger.start_log("RUN")
         working = True
-        self.sercher = Dijkstra(self.graph)
+        self.sercher = Dijkstra(self.graph, self.logger)
         while working:
           result = self.mode_input_handler()
 
@@ -394,35 +394,42 @@ class Susanin:
           while self.add_restricted_transport_handler() != 0:
             pass
           self.logger.log(self.sercher.get_prohibited_transport(), "RestrictedTransportHandler") 
-        
-          limits = weights_t (MAX_WEIGHT, MAX_WEIGHT, MAX_WEIGHT)
+          limits = ''
+          
           if result == 3:
-            limits['fare'] = self.restricted_weights_handler("цене\n")    
+            fare_w = self.restricted_weights_handler(" цене\n")
+            limits = weights_t (MAX_WEIGHT, fare_w, MAX_WEIGHT)    
           elif result == 4:
-            limits['time'] = self.restricted_weights_handler("времени\n")
+            time_w = self.restricted_weights_handler(" времени\n")
+            limits = weights_t (time_w, MAX_WEIGHT, MAX_WEIGHT)
+          else:
+            limits = weights_t (MAX_WEIGHT, MAX_WEIGHT, MAX_WEIGHT)
           weights_log = f"{limits['time']}|{limits['fare']}|{limits['locals']}"
           self.logger.log( weights_log, "ограничения")
           self.sercher.set_limits(limits)
           self.clear()
           self.refresh()
-          self.logger.log("До switch", "loop")
+          #self.logger.log("До switch", "loop")
           if result == 0:
-              self.logger.start_log("findFastRoute")
+              self.logger.start_log("find_fast_cheaper_route")
               try:
                 log_title = "Путь минимальной стоимости среди кратчайших по времени"
                 city_from_title = f"id:{from_city}|name:{self.graph.find_city_by_id(from_city)}"
                 city_to_title = f"id:{to_city}|name:{self.graph.find_city_by_id(to_city)}"
-                self.logger.log(city_from_title, "city_from_title")
-                self.logger.log(city_to_title, "city_to_title")
+                #self.logger.log(city_from_title, "city_from_title")
+                #self.logger.log(city_to_title, "city_to_title")
                 if from_city != to_city:
-                    #path = self.sercher.find_fast_route(from_city, to_city)
+                    path = self.sercher.find_fast_cheaper_route(from_city, to_city)
                     self.logger.end_log()
-                    """self.crswin.attron(crs.color_pair(4))
-                    path_strign = self.graph.route_to_string(path)
+                    if path != -1:
+                        path_str = self.route_to_string(path)
+                    else:
+                        path_str = "Нет пути"
+                    self.crswin.attron(crs.color_pair(4))
                     self.crswin.addstr(0, 0, log_title)
-                    self.logger.log(path_strign, "findFastRoute::")
-                    self.crswin.addstr(3, 0, path_strign)
-                    self.crswin.attroff(crs.color_pair(4))"""
+                    self.logger.log(path_str, "find_fast_cheaper_route::")
+                    self.crswin.addstr(3, 0, path_str)
+                    self.crswin.attroff(crs.color_pair(4))
                 else:
                     self.crswin.addstr("Город отправления = городу прибытия")    
               except RuntimeError:
@@ -431,48 +438,113 @@ class Susanin:
           elif result == 1:
             self.logger.start_log("find_cheap_route")
             try:
-              log_title = "Путь минимальной стоимости среди кратчайших по времени"
-              city_from_title = f"id:{from_city}|name:{self.graph.find_city_by_id(from_city)}"
-              city_to_title = f"id:{to_city}|name:{self.graph.find_city_by_id(to_city)}"
-              self.logger.log(city_from_title, "city_from_title")
-              self.logger.log(city_to_title, "city_to_title")
-              if from_city != to_city:
-                  #path = self.sercher.find_cheap_route(from_city, to_city)
-                  self.logger.end_log()
-                  """self.crswin.attron(crs.color_pair(4))
-                  path_strign = self.graph.route_to_string(path)
-                  self.crswin.addstr(0, 0, log_title)
-                  self.logger.log(path_strign, "findFastRoute::")
-                  self.crswin.addstr(3, 0, path_strign)
-                  self.crswin.attroff(crs.color_pair(4))"""
-              else:
-                  self.crswin.addstr("Город отправления = городу прибытия")    
+                log_title = "Путь минимальной стоимости"
+                #city_from_title = f"id:{from_city}|name:{self.graph.find_city_by_id(from_city)}"
+                #city_to_title = f"id:{to_city}|name:{self.graph.find_city_by_id(to_city)}"
+                #self.logger.log(city_from_title, "city_from_title")
+                #self.logger.log(city_to_title, "city_to_title")
+                if from_city != to_city:
+                    path = self.sercher.find_cheaper_route(from_city, to_city)
+                    self.logger.end_log()
+                    if path != -1:
+                        path_str = self.route_to_string(path)
+                    else:
+                        path_str = "Нет пути"
+                    self.crswin.attron(crs.color_pair(4))
+                    self.crswin.addstr(0, 0, log_title)
+                    self.logger.log(path_str, "find_cheaper_route::")
+                    self.crswin.addstr(3, 0, path_str)
+                    self.crswin.attroff(crs.color_pair(4))
+                else:
+                    self.crswin.addstr("Город отправления = городу прибытия")        
             except RuntimeError:
                 self.logger.end_log()
                 self.crswin.addstr("Пути нет")
           elif result == 2:
-              self.logger.start_log("find_cheap_route")
-              try:
-                log_title = "Путь минимальной стоимости среди кратчайших по времени"
-                city_from_title = f"id:{from_city}|name:{self.graph.find_city_by_id(from_city)}"
-                city_to_title = f"id:{to_city}|name:{self.graph.find_city_by_id(to_city)}"
-                self.logger.log(city_from_title, "city_from_title")
-                self.logger.log(city_to_title, "city_to_title")
-                if from_city != to_city:
-                    #path = self.sercher.find_short_route(from_city, to_city)
+                self.logger.start_log("find_short_route")
+                try:
+                    log_title = "Путь кратчайших по времени среди минимальных по стоимости "
+                    #city_from_title = f"id:{from_city}|name:{self.graph.find_city_by_id(from_city)}"
+                    #city_to_title = f"id:{to_city}|name:{self.graph.find_city_by_id(to_city)}"
+                    #self.logger.log(city_from_title, "city_from_title")
+                    #self.logger.log(city_to_title, "city_to_title")
+                    if from_city != to_city:
+                        path = self.sercher.find_short_route(from_city, to_city)
+                        self.logger.end_log()
+                        if path != -1:
+                            path_str = self.route_to_string(path)
+                        else:
+                            path_str = "Нет пути"
+                        self.crswin.attron(crs.color_pair(4))
+                        self.crswin.addstr(0, 0, log_title)
+                        self.logger.log(path_str, "find_short_route")
+                        self.crswin.addstr(3, 0, path_str)
+                        self.crswin.attroff(crs.color_pair(4))
+                    else:
+                        self.crswin.addstr("Город отправления = городу прибытия")            
+                except RuntimeError:
                     self.logger.end_log()
-                    """self.crswin.attron(crs.color_pair(4))
-                    path_strign = self.graph.route_to_string(path)
-                    self.crswin.addstr(0, 0, log_title)
-                    self.logger.log(path_strign, "findFastRoute::")
-                    self.crswin.addstr(3, 0, path_strign)
-                    self.crswin.attroff(crs.color_pair(4))"""
-                else:
-                    self.crswin.addstr("Город отправления = городу прибытия")    
-              except RuntimeError:
+                    self.crswin.addstr("Пути нет")
+          elif result == 3:
+              #получить ограничения 
+              self.logger.start_log("find_set_cities_lim_cost")
+              try:
+                
+                #city_from_title = f"id:{from_city}|name:{self.graph.find_city_by_id(from_city)}"
+                #city_to_title = f"id:{to_city}|name:{self.graph.find_city_by_id(to_city)}"
+                #self.logger.log(city_from_title, "city_from_title")
+                #self.logger.log(city_to_title, "city_to_title")
+                
+                paths = self.sercher.find_set_cities_lim_cost(from_city)
                 self.logger.end_log()
-                self.crswin.addstr("Пути нет")
-        
+                log_title = "Мно-во достижимых за lim_cost"
+                path_str_list = []
+                if paths != -1:
+                    for rt in paths:
+                        path_str_list.append(self.route_to_string(rt))
+                        path_str_list.append("\n\n")
+                    path_str_list = '\n'.join(path_str_list)
+                else:
+                    path_str_list = "Путей нет"
+
+                self.crswin.attron(crs.color_pair(4))
+                self.crswin.addstr(0, 0, log_title)
+                self.logger.log(path_str_list, "ind_set_cities_lim_cost")
+                self.crswin.addstr(3, 0, path_str_list)
+                self.crswin.attroff(crs.color_pair(4))
+              except RuntimeError:
+                        self.logger.end_log()
+                        self.crswin.addstr("Пути нет")
+          elif result == 4:
+              #получить ограничения 
+              self.logger.start_log("find_set_cities_lim_time")
+              try:
+                
+                #city_from_title = f"id:{from_city}|name:{self.graph.find_city_by_id(from_city)}"
+                #city_to_title = f"id:{to_city}|name:{self.graph.find_city_by_id(to_city)}"
+                #self.logger.log(city_from_title, "city_from_title")
+                #self.logger.log(city_to_title, "city_to_title")
+                
+                paths = self.sercher.find_set_cities_lim_time(from_city)
+                self.logger.end_log()
+                log_title = "Мно-во достижимых за lim_time"
+                path_str_list = []
+                if paths != -1:
+                    for rt in paths:
+                        path_str_list.append(self.route_to_string(rt))
+                        path_str_list.append("\n\n")
+                    path_str_list = '\n'.join(path_str_list)
+                else:
+                    path_str_list = "Путей нет"
+
+                self.crswin.attron(crs.color_pair(4))
+                self.crswin.addstr(0, 0, log_title)
+                self.logger.log(path_str_list, "ind_set_cities_lim_cost")
+                self.crswin.addstr(3, 0, path_str_list)
+                self.crswin.attroff(crs.color_pair(4))
+              except RuntimeError:
+                        self.logger.end_log()
+                        self.crswin.addstr("Пути нет")
           self.logger.end_log()
           while self.crswin.getch() != 10:
             pass
@@ -488,3 +560,12 @@ class Susanin:
         self.logger.end_log()
         return 0
         pass
+    def route_to_string(self, rt):
+        from_name = self.graph.find_city_by_id(rt.from_city)
+        to_name =  self.graph.find_city_by_id(rt.to_city)
+        title = f"{from_name}->{to_name}:{rt.weights}"
+        path = []
+        path.append(title)
+        for fl in rt.path.traverse_forward():
+            path.append(self.graph.flight_to_string(fl))
+        return '\n'.join(path)   
